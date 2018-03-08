@@ -1,13 +1,12 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+FROM centos:7
 
 USER root
 # Install all OS dependencies for notebook server that starts but lacks all
 # features (e.g., download as all possible file formats)
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && apt-get install -yq --no-install-recommends \
+RUN yum --enablerepo=extras install -y epel-release
+RUN yum update -y && yum install -y \
     apt-transport-https \
     build-essential \
     bzip2 \
@@ -15,6 +14,8 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     curl \
     emacs \
     fonts-liberation \
+    gcc \
+    gcc-c++ \
     g++ \
     git \
     inkscape \
@@ -38,11 +39,10 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
     wget \
     zip \
     zlib1g-dev \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    && yum clean all
 
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
+
+RUN localedef -c -i en_US -f UTF-8 en_US.UTF-8
 
 # Install Tini
 RUN wget --quiet https://github.com/krallin/tini/releases/download/v0.10.0/tini && \
@@ -154,19 +154,16 @@ RUN conda install --quiet --yes \
     conda clean -tipsy
 
 # Install graphviz package
-RUN apt-get update && apt-get install -yq --no-install-recommends graphviz \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN yum install -y graphviz \
+    && yum clean all
 
-# Install Python 3 Tensorflow with GPU support
+# Install Python 3 Tensorflow without GPU support
 RUN pip install --quiet --no-cache-dir tf-nightly-gpu
 
 ENV CLOUD_SDK_VERSION 168.0.0
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
-    echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install -y google-cloud-sdk=${CLOUD_SDK_VERSION}-0 kubectl && \
+    curl -sSL https://sdk.cloud.google.com | bash && \
+    source /home/jovyan/google-cloud-sdk/path.bash.inc && \
     gcloud config set core/disable_usage_reporting true && \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image
