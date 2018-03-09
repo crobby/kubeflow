@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:2.7.14
+FROM centos/python-27-centos7
 
+ENV LD_LIBRARY_PATH=/opt/rh/python27/root/usr/lib64
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir grpcio tensorflow tensorflow-serving-api
 
+USER root
 RUN mkdir -p /opt/label /data
 
 WORKDIR /opt/label
