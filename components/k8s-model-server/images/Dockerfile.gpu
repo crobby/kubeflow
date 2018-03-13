@@ -10,32 +10,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn6-devel-centos7
 
-MAINTAINER Jingtian Peng <pjt73651@gmail.com>
+MAINTAINER Chad Roberts <croberts@redhat.com>
 
-RUN apt-get update && apt-get install -y \
+USER root
+RUN yum --enablerepo=extras install -y epel-release
+RUN yum update -y && yum install -y \
         build-essential \
         curl \
-        libcurl3-dev \
         git \
+        gcc \
+        gcc-c++ \
+        g++ \
         libfreetype6-dev \
         libpng12-dev \
         libzmq3-dev \
+        mlocate \
         pkg-config \
-        python-dev \
+        python-devel \
         python-numpy \
         python-pip \
         software-properties-common \
         swig \
         zip \
         zlib1g-dev \
+        libcurl3-dev \
+        openjdk-8-jdk\
+        openjdk-8-jre-headless \
+        patch \
+        wget \
+        unzip \
+        which \
         && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    yum clean all
 
 # Set up grpc
-RUN pip install mock grpcio
+ENV LD_LIBRARY_PATH=/opt/rh/python27/root/usr/lib64:/usr/local/cuda/lib64
+RUN pip install --upgrade pip
+RUN pip install mock grpcio numpy
 
 # Set up all envs
 ENV BAZELRC=/root/.bazelrc \
@@ -58,11 +71,11 @@ ENV BAZELRC=/root/.bazelrc \
     TF_CUDA_CLANG=0 \
     TF_NEED_OPENCL_SYCL=0 \
     CUDA_TOOLKIT_PATH=/usr/local/cuda \
-    CUDNN_INSTALL_PATH=/usr/lib/x86_64-linux-gnu \
+    CUDNN_INSTALL_PATH=/usr/local/cuda \
     GCC_HOST_COMPILER_PATH=/usr/bin/gcc \
     PYTHON_BIN_PATH=/usr/bin/python \
     CC_OPT_FLAGS="-march=native" \
-    PYTHON_LIB_PATH=/usr/local/lib/python2.7/dist-packages
+    PYTHON_LIB_PATH=/usr/lib64/python2.7/site-packages
 
 # Install the most recent bazel release.
 RUN mkdir /bazel && \
@@ -81,8 +94,9 @@ RUN cd /root && \
     git submodule init && \
     git submodule update --recursive
 
-# Configure Tensorflow to use the GPU
-RUN cd /root/serving/tensorflow && ./configure
+# Configure Tensorflow to use the GPU, the touch stropts.h line is a workaround for a bug
+RUN cd /root/serving/tensorflow && ./configure && \
+    touch /usr/include/stropts.h
 
 # Compile TF serving with CUDA support
 RUN cd /root/serving && \
