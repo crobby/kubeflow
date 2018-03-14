@@ -22,23 +22,11 @@ RUN yum update -y && yum install -y \
         git \
         gcc \
         gcc-c++ \
-        g++ \
-        libfreetype6-dev \
-        libpng12-dev \
-        libzmq3-dev \
         mlocate \
-        pkg-config \
         python-devel \
-        python-numpy \
         python-pip \
-        software-properties-common \
         swig \
         zip \
-        zlib1g-dev \
-        libcurl3-dev \
-        openjdk-8-jdk\
-        openjdk-8-jre-headless \
-        patch \
         wget \
         unzip \
         which \

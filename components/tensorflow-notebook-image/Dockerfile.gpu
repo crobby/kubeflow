@@ -7,32 +7,14 @@ USER root
 # features (e.g., download as all possible file formats)
 RUN yum --enablerepo=extras install -y epel-release
 RUN yum update -y && yum install -y \
-    apt-transport-https \
-    build-essential \
     bzip2 \
-    ca-certificates \
-    curl \
     emacs \
-    fonts-liberation \
     gcc \
     gcc-c++ \
-    g++ \
     git \
     inkscape \
-    jed \
-    libav-tools \
-    libcupti-dev \
-    libsm6 \
-    libxext-dev \
-    libxrender1 \
-    lmodern \
-    locales \
-    lsb-release \
-    openssh-client \
     pandoc \
-    pkg-config \
-    python \
-    python-dev \
+    python-devel \
     sudo \
     unzip \
     vim \
