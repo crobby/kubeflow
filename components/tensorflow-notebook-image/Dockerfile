@@ -1,8 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-ARG BASE_IMAGE=ubuntu:latest
-
+ARG BASE_IMAGE=centos:7
 FROM $BASE_IMAGE
 
 ARG INSTALL_TFMA=yes
@@ -22,27 +21,31 @@ ENV PATH $CONDA_DIR/bin:$PATH
 # Use bash instead of sh
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && apt-get install -yq --no-install-recommends \
-  apt-transport-https \
-  build-essential \
-  bzip2 \
-  ca-certificates \
-  curl \
-  g++ \
-  git \
-  graphviz \
-  locales \
-  lsb-release \
-  sudo \
-  unzip \
-  vim \
-  wget \
-  zip \
-  && apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+USER root
+# Install all OS dependencies for notebook server that starts but lacks all
+# features (e.g., download as all possible file formats)
+RUN yum --enablerepo=extras install -y epel-release && \
+    yum update -y && yum install -y \
+    bzip2 \
+    ca-certificates \
+    curl \
+    emacs \
+    gcc \
+    gcc-c++ \
+    git \
+    inkscape \
+    pandoc \
+    python \
+    python-devel \
+    redhat-lsb \
+    sudo \
+    unzip \
+    vim \
+    wget \
+    zip \
+    && yum clean all
 
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
+RUN localedef -c -i en_US -f UTF-8 en_US.UTF-8
 
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -52,11 +55,10 @@ ENV LANGUAGE en_US.UTF-8
 RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
     chown -R ${NB_USER}:users /usr/local/bin
 
+ENV CLOUD_SDK_VERSION 168.0.0
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
-    echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    apt-get update && \
-    apt-get install -y google-cloud-sdk kubectl && \
+    echo $'[google-cloud-sdk]\nname=Google Cloud SDK\nbaseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg\n       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' > /etc/yum.repos.d/google-cloud-sdk.repo && \
+    yum --disablerepo="*" --enablerepo="google-cloud-sdk" install -y google-cloud-sdk-${CLOUD_SDK_VERSION} && \
     gcloud config set core/disable_usage_reporting true && \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image

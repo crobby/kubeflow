@@ -14,7 +14,7 @@ TAG=$3
 # Takes a value of true or false. Determines if we should tag the image
 # with the "latest" tag
 IS_LATEST=$4
-BASE_IMAGE=${5:-"ubuntu:latest"}
+BASE_IMAGE=${5:-"centos:7"}
 TF_PACKAGE=${6:-"tf-nightly"}
 TF_PACKAGE_PY_27=${7:-"tf-nightly"}
 INSTALL_TFMA=$8
