@@ -15,8 +15,8 @@ FROM nvidia/cuda:8.0-cudnn6-devel-centos7
 MAINTAINER Chad Roberts <croberts@redhat.com>
 
 USER root
-RUN yum --enablerepo=extras install -y epel-release
-RUN yum update -y && yum install -y \
+RUN yum --enablerepo=extras install -y epel-release && \
+    yum update -y && yum install -y \
         build-essential \
         curl \
         git \
