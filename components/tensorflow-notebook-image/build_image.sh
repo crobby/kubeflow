@@ -9,7 +9,7 @@ set -ex
 DOCKERFILE=$1
 CONTEXT_DIR=$(dirname "$DOCKERFILE")
 IMAGE=$2
-BASE_IMAGE=${3:-"ubuntu:latest"}
+BASE_IMAGE=${3:-"centos:7"}
 TF_PACKAGE=${4:-"tf-nightly"}
 
 # Wait for the Docker daemon to be available.

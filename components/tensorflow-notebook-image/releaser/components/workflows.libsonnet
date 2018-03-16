@@ -246,8 +246,8 @@
                 ],
               },
             },  // checkout
-            buildImageTemplate("build-cpu-notebook", cpuImage, "ubuntu:latest", "tf-nightly"),
-            buildImageTemplate("build-gpu-notebook", gpuImage, "nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04", "tf-nightly-gpu"),
+            buildImageTemplate("build-cpu-notebook", cpuImage, "centos:7", "tf-nightly"),
+            buildImageTemplate("build-gpu-notebook", gpuImage, "nvidia/cuda:8.0-cudnn6-devel-centos7", "tf-nightly-gpu"),
             buildTemplate("create-pr-symlink", [
               "python",
               "-m",
