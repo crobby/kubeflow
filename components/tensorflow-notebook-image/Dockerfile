@@ -77,6 +77,7 @@ RUN cd /tmp && \
 
 # Install Jupyter Notebook and Hub
 RUN conda install --quiet --yes \
+    'tornado=4.5.3' \
     'notebook=5.0.*' \
     'jupyterhub=0.8.1' \
     'jupyterlab=0.31.*' \
