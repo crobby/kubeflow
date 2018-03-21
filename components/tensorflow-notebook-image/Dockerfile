@@ -1,7 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-ARG BASE_IMAGE=centos:7
+ARG BASE_IMAGE=nvidia/cuda:8.0-cudnn6-devel-centos7
 FROM $BASE_IMAGE
 
 USER root
@@ -141,7 +141,7 @@ RUN conda install --quiet --yes \
     conda clean -tipsy
 
 # Install Python 3 Tensorflow without GPU support
-ARG TF_PACKAGE=tf-nightly
+ARG TF_PACKAGE=tf-nightly-gpu
 RUN echo Installing $TF_PACKAGE && pip install --quiet --no-cache-dir $TF_PACKAGE
 
 ENV CLOUD_SDK_VERSION 168.0.0
