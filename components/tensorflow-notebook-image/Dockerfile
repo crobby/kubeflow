@@ -140,18 +140,14 @@ RUN conda install --quiet --yes \
     conda remove --quiet --yes --force qt pyqt && \
     conda clean -tipsy
 
-# Install graphviz package
-RUN yum install -y graphviz \
-    && yum clean all
-
 # Install Python 3 Tensorflow without GPU support
 ARG TF_PACKAGE=tf-nightly
 RUN echo Installing $TF_PACKAGE && pip install --quiet --no-cache-dir $TF_PACKAGE
 
 ENV CLOUD_SDK_VERSION 168.0.0
 RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
-    curl -sSL https://sdk.cloud.google.com | bash && \
-    source /home/jovyan/google-cloud-sdk/path.bash.inc && \
+    echo $'[google-cloud-sdk]\nname=Google Cloud SDK\nbaseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg\n       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' > /etc/yum.repos.d/google-cloud-sdk.repo && \
+    yum --disablerepo="*" --enablerepo="google-cloud-sdk" install -y google-cloud-sdk-${CLOUD_SDK_VERSION} && \
     gcloud config set core/disable_usage_reporting true && \
     gcloud config set component_manager/disable_update_check true && \
     gcloud config set metrics/environment github_docker_image
