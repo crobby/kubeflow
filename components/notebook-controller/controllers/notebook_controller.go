@@ -299,12 +299,12 @@ func generateStatefulSet(instance *v1beta1.Notebook) *appsv1.StatefulSet {
 		Name:  "NB_PREFIX",
 		Value: "/notebook/" + instance.Namespace + "/" + instance.Name,
 	})
-	if podSpec.SecurityContext == nil {
-		fsGroup := DefaultFSGroup
-		podSpec.SecurityContext = &corev1.PodSecurityContext{
-			FSGroup: &fsGroup,
-		}
-	}
+	// if podSpec.SecurityContext == nil {
+	// 	fsGroup := DefaultFSGroup
+	// 	podSpec.SecurityContext = &corev1.PodSecurityContext{
+	// 		FSGroup: &fsGroup,
+	// 	}
+	// }
 	return ss
 }
 

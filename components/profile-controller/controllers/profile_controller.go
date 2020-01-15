@@ -115,7 +115,7 @@ func (r *ProfileReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error)
 			Annotations: map[string]string{"owner": instance.Spec.Owner.Name},
 			// inject istio sidecar to all pods in target namespace by default.
 			Labels: map[string]string{
-				istioInjectionLabel:        "enabled",
+				// istioInjectionLabel:        "enabled",
 				katibMetricsCollectorLabel: "enabled",
 			},
 			Name: instance.Name,
