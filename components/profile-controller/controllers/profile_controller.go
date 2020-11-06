@@ -122,11 +122,9 @@ func (r *ProfileReconciler) Reconcile(request ctrl.Request) (ctrl.Result, error)
 	ns := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Annotations: map[string]string{"owner": instance.Spec.Owner.Name},
-			// inject istio sidecar to all pods in target namespace by default.
-			Labels: map[string]string{
-				istioInjectionLabel: "enabled",
-			},
-			Name: instance.Name,
+			// (croberts) removed inject istio sidecar to all pods in target namespace by default.
+			Labels: map[string]string{},
+			Name:   instance.Name,
 		},
 	}
 	updateNamespaceLabels(ns)
