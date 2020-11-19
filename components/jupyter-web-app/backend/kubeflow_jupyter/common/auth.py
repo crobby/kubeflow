@@ -43,6 +43,9 @@ def is_authorized(user, verb, namespace, group, version, resource):
     Create a SubjectAccessReview to the K8s API to determine if the user is
     authorized to perform a specific verb on a resource.
     '''
+    # Always returning True to avoid sar on openshift against a user that has no chance of succeeding
+    return True  
+
     if settings.DEV_MODE:
         logger.warning(
             ("Running in developement mode. No authorization checks will be"
